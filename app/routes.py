@@ -1,5 +1,6 @@
+from datetime import datetime
 from flask_login import current_user, login_user, logout_user, login_required
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from urllib.parse import urlsplit
 import sqlalchemy as sa
 from app import app
@@ -60,3 +61,13 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/api/time', methods=['GET'])
+def get_current_time():
+    now = datetime.utcnow()
+    time_data = {
+        'current_time': now.strftime('%Y-%m-%d %H:%M:%S UTC'),
+        'name':'Petros'
+        
+    }
+    return jsonify(time_data)
