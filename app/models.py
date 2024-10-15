@@ -6,6 +6,7 @@ import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app import login
 from app import db
+#import adafruit_dht
 
 @login.user_loader
 def load_user(id):
@@ -43,3 +44,16 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+"""
+class DHT11Sensor:
+    def init(self, gpio_pin):
+        self.sensor = adafruit_dht.DHT11
+        self.gpio_pin = gpio_pin
+    
+    def get_readings(self):
+        humidity, temperature = adafruit_dht.read(self.sensor, self.gpio_pin)
+        if humidity is not None and temperature is not None:
+            return {'temperature': temperature, 'humidity': humidity}
+        else:
+            return {'error': 'Failed to retrieve data from the sensor'}"""
