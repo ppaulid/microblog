@@ -6,7 +6,8 @@ import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app import login
 from app import db
-#import adafruit_dht
+import platform
+import random
 
 @login.user_loader
 def load_user(id):
@@ -45,15 +46,25 @@ class Post(db.Model):
     def __repr__(self):
         return '<Post {}>'.format(self.body)
 
-"""
+if platform.system() != "Windows":
+    import adafruit_dht
+
 class DHT11Sensor:
-    def init(self, gpio_pin):
-        self.sensor = adafruit_dht.DHT11
+    def __init__(self, gpio_pin):
         self.gpio_pin = gpio_pin
+        self.is_windows = platform.system() == "Windows"  #Check if running on Windows
     
     def get_readings(self):
-        humidity, temperature = adafruit_dht.read(self.sensor, self.gpio_pin)
-        if humidity is not None and temperature is not None:
-            return {'temperature': temperature, 'humidity': humidity}
+        if self.is_windows:
+            # Simulate data if on Windows
+            return {
+                'temperature': round(random.uniform(20.0, 30.0), 2),
+                'humidity': round(random.uniform(30.0, 70.0), 2)
+            }
         else:
-            return {'error': 'Failed to retrieve data from the sensor'}"""
+            # Read actual sensor data on Raspberry Pi
+            humidity, temperature = adafruit_dht.read(self.sensor, self.gpio_pin)
+            if humidity is not None and temperature is not None:
+                return {'temperature': temperature, 'humidity': humidity}
+            else:
+                return {'error': 'Failed to retrieve data from the sensor'}

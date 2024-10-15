@@ -1,4 +1,5 @@
 from datetime import datetime
+import platform
 from flask_login import current_user, login_user, logout_user, login_required
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from urllib.parse import urlsplit
@@ -7,7 +8,7 @@ from app import app
 from app import db
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
-#from app.models import DHT11Sensor
+from app.models import DHT11Sensor
 
 @app.route('/')
 @app.route('/index')
@@ -74,21 +75,19 @@ def get_current_time():
     return jsonify(time_data)
 
 
-'''
+sensor = DHT11Sensor(gpio_pin=4)
 @app.route('/api/dht11', methods=['GET'])
 def temphum():
-    sensor = DHT11Sensor(gpio_pin=4)
     data = sensor.get_readings()
-    
     if 'error' not in data:
         return render_template('dht11.html', temperature=data['temperature'], humidity=data['humidity'])
     else:
         return "Failed to retrieve data from the sensor"
         
+@app.route('/api/dht11/data', methods=['GET'])
 def api_data():
-    sensor = DHT11Sensor(gpio_pin=4)
     data = sensor.get_readings()
     if 'error' not in data:
         return jsonify(data)
     else:
-        return jsonify(data), 500'''
+        return jsonify(data), 500
