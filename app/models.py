@@ -73,7 +73,7 @@ class DHT11Sensor:
             }
         else:
             # Read actual sensor data on Raspberry Pi
-            humidity, temperature = adafruit_dht.read_retry(adafruit_dht.DHT11, self.gpio_pin)
+            humidity, temperature = adafruit_dht.measure(adafruit_dht.DHT11, self.gpio_pin)
             if humidity is not None and temperature is not None:
                 return {'temperature': temperature, 'humidity': humidity}
             else:
