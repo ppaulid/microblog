@@ -56,24 +56,6 @@ class Post(db.Model):
         return '<Post {}>'.format(self.body)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 if platform.system() != "Windows":
     import adafruit_dht
 

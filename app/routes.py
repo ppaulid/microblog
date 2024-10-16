@@ -111,16 +111,6 @@ def edit_profile():
                            form=form)
 
 
-
-
-
-
-
-
-
-
-
-
 sensor = DHT11Sensor(gpio_pin=4)
 @app.route('/api/dht11', methods=['GET'])
 def temphum():
