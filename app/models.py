@@ -58,11 +58,17 @@ class Post(db.Model):
 
 if platform.system() != "Windows":
     import adafruit_dht
+    import board
 
 class DHT11Sensor:
     def __init__(self, gpio_pin):
         self.gpio_pin = gpio_pin
         self.is_windows = platform.system() == "Windows"  #Check if running on Windows
+
+        if not self.is_windows:
+            # Initialize the DHT sensor (DHT11 in this case) for the specified pin
+            # Convert the GPIO pin number to the appropriate board pin
+            self.sensor = adafruit_dht.DHT11(getattr(board, f'D{gpio_pin}'))
     
     def get_readings(self):
         if self.is_windows:
@@ -72,9 +78,17 @@ class DHT11Sensor:
                 'humidity': round(random.uniform(30.0, 70.0), 2)
             }
         else:
-            # Read actual sensor data on Raspberry Pi
-            humidity, temperature = adafruit_dht.measure(adafruit_dht.DHT11, self.gpio_pin)
-            if humidity is not None and temperature is not None:
-                return {'temperature': temperature, 'humidity': humidity}
-            else:
-                return {'error': 'Failed to retrieve data from the sensor'}
+            try:
+                # Read actual sensor data on Raspberry Pi
+                temperature = self.sensor.temperature
+                humidity = self.sensor.humidity
+
+                # Ensure valid readings
+                if humidity is not None and temperature is not None:
+                    return {'temperature': temperature, 'humidity': humidity}
+                else:
+                    return {'error': 'Failed to retrieve data from the sensor'}
+
+            except RuntimeError as error:
+                # Handle sensor reading errors (which occur occasionally)
+                return {'error': str(error)}
