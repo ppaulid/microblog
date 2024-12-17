@@ -9,6 +9,10 @@ from app import login
 from app import db
 import platform
 import random
+import uuid
+
+def generate_uuid():
+    return str(uuid.uuid4())
 
 @login.user_loader
 def load_user(id):
@@ -92,3 +96,9 @@ class DHT11Sensor:
             except RuntimeError as error:
                 # Handle sensor reading errors (which occur occasionally)
                 return {'error': str(error)}
+
+class Temperature(db.Model):
+    id = db.Column(db.String(64), primary_key=True, default=generate_uuid)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    value = db.Column(db.Float)
+

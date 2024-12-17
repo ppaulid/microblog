@@ -7,8 +7,7 @@ import sqlalchemy as sa
 from app import app
 from app import db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
-from app.models import User
-from app.models import DHT11Sensor
+from app.models import User, DHT11Sensor, Temperature
 
 @app.route('/')
 @app.route('/index')
@@ -127,3 +126,14 @@ def api_data():
         return jsonify(data)
     else:
         return jsonify(data), 500
+    
+@app.route('/api/input', methods=['POST'])
+def readInput():
+    data = request.json
+    if data['type'] == 'temperature':
+        inputTemp = Temperature(value=data['value'])
+        db.session.add(inputTemp)
+        db.session.commit()
+        return 'success'
+    else:
+        return 'failed'
