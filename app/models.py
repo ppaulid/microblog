@@ -102,3 +102,7 @@ class Temperature(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     value = db.Column(db.Float)
 
+class Humidity(db.Model):
+    id = db.Column(db.String(64), primary_key=True, default=generate_uuid)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    value = db.Column(db.Float)

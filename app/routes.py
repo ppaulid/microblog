@@ -7,7 +7,7 @@ import sqlalchemy as sa
 from app import app
 from app import db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
-from app.models import User, DHT11Sensor, Temperature
+from app.models import User, DHT11Sensor, Temperature, Humidity
 
 @app.route('/')
 @app.route('/index')
@@ -127,13 +127,37 @@ def api_data():
     else:
         return jsonify(data), 500
     
-@app.route('/api/input', methods=['POST'])
-def readInput():
-    data = request.json
+
+def checkData(data):
+    if 'type' not in data or 'value' not in data:
+        return 'failed'
     if data['type'] == 'temperature':
         inputTemp = Temperature(value=data['value'])
         db.session.add(inputTemp)
         db.session.commit()
         return 'success'
+    elif data['type'] == 'humidity':
+        inputHum = Humidity(value=data['value'])
+        db.session.add(inputHum)
+        db.session.commit()
+        return 'success'
+    else:
+        return 'failed'
+
+@app.route('/api/input', methods=['POST'])
+def readInput():
+    data = request.json
+    # print(data)
+    # check if the data is an array of dictionaries or a dictionary
+    if isinstance(data, list):
+        status = 'success'
+        for item in data:
+            print(f'item: {item}')
+            if checkData(item) == 'failed':
+                status = 'failed'
+        return status
+    elif isinstance(data, dict):
+        return checkData(data)
+        
     else:
         return 'failed'
